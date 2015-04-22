@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.datatools.connectivity.jdt.DRIVERLIBRARY/MySQL JDBC Driver"/>
+	<classpathentry kind="lib" path="lib/jgrapht-core-0.9.1.jar" sourcepath="D:/Dropbox/Didattica/03FYZ Tecniche di programmazione/tools/libraries/jgrapht-0.9.1.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/D:/Dropbox/Didattica/03FYZ%20Tecniche%20di%20programmazione/tools/libraries/jgrapht-0.9.1.zip!/jgrapht-0.9.1/javadoc"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
