@@ -6,71 +6,73 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jgrapht.Graphs;
-import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
 public class Model {
-	
+
 	private List<Country> countries ;
 	
-	private UndirectedGraph<Country, DefaultEdge> connectivity ;
+	private SimpleGraph<Country, DefaultEdge> graph ;
 	
-	/**
-	 * @return the connectivity
-	 */
-	public UndirectedGraph<Country, DefaultEdge> getConnectivity() {
-		return connectivity;
-	}
-
 	public Model() {
 		this.countries = new LinkedList<Country>() ;
-		
-		this.connectivity = new SimpleGraph<Country, DefaultEdge>(DefaultEdge.class) ;
-		
+		this.graph = new SimpleGraph<Country, DefaultEdge>(DefaultEdge.class) ;
 	}
-
-	/**
-	 * @return the countries
-	 */
-	public List<Country> getCountries() {
-		return countries;
-	}
-
+	
 	public void loadCountries() {
+		
 		CountryDAO dao = new CountryDAO() ;
 		countries.clear();
-		countries.addAll(dao.getCountries()) ;
+		countries.addAll( dao.loadAllCountries() ) ; 
+		
 	}
 	
 	public void buildGraph() {
 		
+		Graphs.addAllVertices(this.graph, this.countries) ;
+		
 		CountryDAO dao = new CountryDAO() ;
 
-		Graphs.addAllVertices(connectivity, countries) ;
-		
-		for(Country c: countries) {
-			List<Country> others = dao.getConnectedCountries(c) ;
+		for(Country c1 : graph.vertexSet() ) {
+			List<Country> bordering = dao.getBorderingCountries(c1, 1) ;
 			
-			for( Country c2: others ) {
-				connectivity.addEdge(c, c2) ;
+			for( Country c2: bordering ) {
+				
+				graph.addEdge(c1, c2) ;
+				
 			}
 		}
 		
-		System.out.println(connectivity.toString()) ; 
-		
+		//System.out.println(graph.toString()) ;
 	}
 	
-	public static void main(String [] args) {
+	
+	public static void main(String[] args) {
+		
 		Model m = new Model() ;
 		
 		m.loadCountries();
 		
-		/*for( Country c: m.getCountries() ) {
+		/*
+		for(Country c: m.getCountries()) {
 			System.out.println(c.toString()) ;
-		}*/
+		}
+		*/
 		
-		m.buildGraph();
+		m.buildGraph(); 
+
+		System.out.format("Graph: %d vertices, %d edges\n",
+				m.getGraph().vertexSet().size(),
+				m.getGraph().edgeSet().size()) ;
 	}
-	
+
+	public SimpleGraph<Country, DefaultEdge> getGraph() {
+		return graph;
+	}
+
+	public List<Country> getCountries() {
+		return countries;
+	}
+
 }

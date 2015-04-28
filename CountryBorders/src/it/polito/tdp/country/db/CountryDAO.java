@@ -11,83 +11,86 @@ import java.util.List;
 
 public class CountryDAO {
 	
-	public List<Country> getCountries() {
+	public List<Country> loadAllCountries() {
+		
 		String sql = 
-				"SELECT CCode, StateAbb, StateNme " +
+				"SELECT ccode,StateAbb,StateNme " +
 				"FROM country " +
-				"ORDER BY StateNme" ;
-		
-		Connection conn = DBConnect.getConnection();
-		
+				"ORDER BY StateAbb " ;
+
 		try {
+			Connection conn = DBConnect.getConnection() ;
 
-			PreparedStatement st = conn.prepareStatement(sql);
-			ResultSet res = st.executeQuery();
+			PreparedStatement st = conn.prepareStatement(sql) ;
 			
-			List<Country> countries = new LinkedList<Country>() ;
-
+			ResultSet rs = st.executeQuery() ;
 			
-			while (res.next()) { 
-				Country c = new Country(
-						res.getInt("CCode"),
-						res.getString("StateAbb"),
-						res.getString("StateNme"));
+			List<Country> list = new LinkedList<Country>() ;
+			
+			while( rs.next() ) {
 				
-				countries.add(c) ;
+				Country c = new Country(
+						rs.getInt("ccode"),
+						rs.getString("StateAbb"), 
+						rs.getString("StateNme")) ;
+				
+				list.add(c) ;
 			}
 			
-			res.close();
-			st.close() ;
-			conn.close();
-
-			return countries;
-
+			conn.close() ;
+			
+			return list ;
+			
+			
 		} catch (SQLException e) {
-			return null;
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
+		return null ;
 	}
 	
-	public List<Country> getConnectedCountries(Country c1) {
-		
+	public List<Country> getBorderingCountries(Country c, int contType) {
 		String sql = 
-				"SELECT CCode, StateAbb, StateNme, contiguity.year " +
+				"SELECT CCode, StateAbb, StateNme " +
 				"FROM country, contiguity " +
-				"WHERE contiguity.state1no = ? "+
-				"AND country.CCode = contiguity.state2no " +
-				"ORDER BY StateNme" ;
+				"WHERE country.CCode = contiguity.state2no " +
+				"AND contiguity.state1no = ? " +
+				"AND contiguity.conttype <= ? " ;
 
-		Connection conn = DBConnect.getConnection();
-		
 		try {
+			Connection conn = DBConnect.getConnection() ;
 
-			PreparedStatement st = conn.prepareStatement(sql);
-			st.setInt(1, c1.getcCode());
+			PreparedStatement st = conn.prepareStatement(sql) ;
 			
-			ResultSet res = st.executeQuery();
+			st.setInt(1, c.getcCode()) ;
+			st.setInt(2, contType) ;
 			
-			List<Country> countries = new LinkedList<Country>() ;
-
+			ResultSet rs = st.executeQuery() ;
 			
-			while (res.next()) { 
-				Country c2 = new Country(
-						res.getInt("CCode"),
-						res.getString("StateAbb"),
-						res.getString("StateNme"));
+			List<Country> list = new LinkedList<Country>() ;
+			
+			while( rs.next() ) {
 				
-				countries.add(c2) ;
+				Country c2 = new Country(
+						rs.getInt("ccode"),
+						rs.getString("StateAbb"), 
+						rs.getString("StateNme")) ;
+				
+				list.add(c2) ;
 			}
 			
-			res.close();
-			st.close() ;
-			conn.close();
-
-			return countries;
-
+			conn.close() ;
+			
+			return list ;
+			
+			
 		} catch (SQLException e) {
-			return null;
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
 		
+		return null ;
 	}
 
 }
