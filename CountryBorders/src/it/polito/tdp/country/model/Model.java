@@ -8,6 +8,8 @@ import java.util.List;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.traverse.BreadthFirstIterator;
+import org.jgrapht.traverse.DepthFirstIterator;
 
 public class Model {
 
@@ -35,7 +37,7 @@ public class Model {
 		CountryDAO dao = new CountryDAO() ;
 
 		for(Country c1 : graph.vertexSet() ) {
-			List<Country> bordering = dao.getBorderingCountries(c1, 1) ;
+			List<Country> bordering = dao.getBorderingCountries(c1, 1, 2006) ;
 			
 			for( Country c2: bordering ) {
 				
@@ -44,7 +46,24 @@ public class Model {
 			}
 		}
 		
-		//System.out.println(graph.toString()) ;
+		System.out.println(graph.toString()) ;
+	}
+	
+	
+	public List<Country> getRaggiungibili(Country start) {
+		
+		BreadthFirstIterator<Country, DefaultEdge> visita =
+				new BreadthFirstIterator<Country, DefaultEdge>(this.graph, start) ;
+		
+		List<Country> vicini = new LinkedList<Country>() ;
+		
+		while( visita.hasNext() ) {
+			Country c = visita.next() ;
+			vicini.add(c) ;
+		}
+				
+		return vicini ;
+		
 	}
 	
 	
@@ -65,6 +84,34 @@ public class Model {
 		System.out.format("Graph: %d vertices, %d edges\n",
 				m.getGraph().vertexSet().size(),
 				m.getGraph().edgeSet().size()) ;
+		
+		// Quali nazioni confinano con l'Italia?
+		Country italia = null;
+		for (Country c: m.getCountries()) {
+			if(c.getStateAbb().equals("ITA")) {
+				italia = c ;
+				break ;
+			}
+		}
+		
+		List<Country> confinanti = 
+				Graphs.neighborListOf(m.getGraph(), italia) ;
+		
+		System.out.println("STATI CONFINANTI") ;
+		for(Country c: confinanti) {
+			System.out.println(c.toString()) ;
+		}
+		
+		// Quali nazioni sono raggiungibili via terra dall'Italia?
+
+		List<Country> raggiungibili = 
+				m.getRaggiungibili(italia) ;
+
+		System.out.println("STATI RAGGIUNGIBILI VIA TERRA") ;
+		for(Country c: raggiungibili) {
+			System.out.println(c.toString()) ;
+		}
+
 	}
 
 	public SimpleGraph<Country, DefaultEdge> getGraph() {
