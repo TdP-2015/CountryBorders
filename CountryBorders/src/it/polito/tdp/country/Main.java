@@ -1,5 +1,6 @@
 package it.polito.tdp.country;
 	
+import it.polito.tdp.country.model.Model;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -11,9 +12,17 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			BorderPane root = (BorderPane)FXMLLoader.load(getClass().getResource("Borders.fxml"));
-			Scene scene = new Scene(root,400,400);
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("Borders.fxml")) ;
+			BorderPane root = (BorderPane)loader.load();
+			Scene scene = new Scene(root);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			
+			BordersController controller = loader.getController() ;
+			Model model = new Model() ;
+			model.loadCountries();
+			model.buildGraph();
+			controller.setModel(model);
+			
 			primaryStage.setScene(scene);
 			primaryStage.show();
 		} catch(Exception e) {
