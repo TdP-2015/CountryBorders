@@ -18,9 +18,11 @@ public class Main extends Application {
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			
 			BordersController controller = loader.getController() ;
+			
 			Model model = new Model() ;
 			model.loadCountries();
 			model.buildGraph();
+			
 			controller.setModel(model);
 			
 			primaryStage.setScene(scene);

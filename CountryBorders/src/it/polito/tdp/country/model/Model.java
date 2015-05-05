@@ -4,6 +4,7 @@ import it.polito.tdp.country.db.CountryDAO;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
@@ -66,6 +67,23 @@ public class Model {
 		
 	}
 	
+	public Map<Country, Country> getCammini(Country start) {
+		
+		BreadthFirstIterator<Country, DefaultEdge> visita =
+				new BreadthFirstIterator<Country, DefaultEdge>(this.graph, start) ;
+
+		VisitListener listener = new VisitListener(graph) ;
+		visita.addTraversalListener( listener );
+		
+		while( visita.hasNext() ) {
+			visita.next() ;
+		}
+		
+		return listener.getFather() ;
+
+		
+	}
+	
 	
 	public static void main(String[] args) {
 		
@@ -120,6 +138,13 @@ public class Model {
 
 	public List<Country> getCountries() {
 		return countries;
+	}
+
+	public List<Country> shortestPath(Country countryStart, Country countryEnd) {
+		getCammini(countryStart);
+
+		
+		return null;
 	}
 
 }

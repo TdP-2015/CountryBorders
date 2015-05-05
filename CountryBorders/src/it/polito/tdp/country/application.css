@@ -1,1 +1,5 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+Label#Title {
+	-fx-text-fill: rgb(0,0,255);
+	-fx-font-size: 150%;
+}
