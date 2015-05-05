@@ -18,11 +18,33 @@ public class Model {
 	
 	private SimpleGraph<Country, DefaultEdge> graph ;
 	
+	/**
+	 * Create a new model
+	 */
 	public Model() {
 		this.countries = new LinkedList<Country>() ;
 		this.graph = new SimpleGraph<Country, DefaultEdge>(DefaultEdge.class) ;
 	}
 	
+	/**
+	 * Get an instance of the Country Bordering Graph
+	 * @return the graph
+	 */
+	public SimpleGraph<Country, DefaultEdge> getGraph() {
+		return graph;
+	}
+
+	/**
+	 * Return the list of all countries
+	 * @return the countries
+	 */
+	public List<Country> getCountries() {
+		return countries;
+	}
+
+	/**
+	 * Load all countries from the database. Must be called before other methods.
+	 */
 	public void loadCountries() {
 		
 		CountryDAO dao = new CountryDAO() ;
@@ -31,6 +53,10 @@ public class Model {
 		
 	}
 	
+	/**
+	 * Build the connectivity graph among countries. Must be called before
+	 * any method that needs connectivity information.
+	 */
 	public void buildGraph() {
 		
 		Graphs.addAllVertices(this.graph, this.countries) ;
@@ -47,10 +73,15 @@ public class Model {
 			}
 		}
 		
-		System.out.println(graph.toString()) ;
+		// System.out.println(graph.toString()) ;
 	}
 	
 	
+	/**
+	 * Calcola tutti gli stati raggiungibili (via terra) dallo stato specificato
+	 * @param start lo stato di partenza
+	 * @return la lista di stati raggiungibili (in ordine di BFV)
+	 */
 	public List<Country> getRaggiungibili(Country start) {
 		
 		BreadthFirstIterator<Country, DefaultEdge> visita =
@@ -64,27 +95,58 @@ public class Model {
 		}
 				
 		return vicini ;
-		
 	}
 	
+	/**
+	 * Calcola l'albero della visita in ampiezza del grafo
+	 * @param start vertice di partenza
+	 * @return l'albero BFV, in cui ad ogni vertice raggiungibile è associato il vertice che lo precede nell'albero
+	 */
 	public Map<Country, Country> getCammini(Country start) {
 		
+		// Esplora il grafo in ampiezza, partendo dal nodo start
 		BreadthFirstIterator<Country, DefaultEdge> visita =
 				new BreadthFirstIterator<Country, DefaultEdge>(this.graph, start) ;
 
+		// regista il listener (che terrà traccia dell'albero di visita)
 		VisitListener listener = new VisitListener(graph) ;
 		visita.addTraversalListener( listener );
 		
+		// esegui la visita del grafo (senza fare nulla, farà tutto il listener)
 		while( visita.hasNext() ) {
 			visita.next() ;
 		}
 		
+		// restituisci il grafo di visita
 		return listener.getFather() ;
-
-		
 	}
 	
-	
+	/**
+	 * Calcola il cammino più breve tra due {@link Country} e lo restituisce sotto forma di lista.
+	 * Nel caso in cui non esista un cammino, ritorna una lista vuota (zero elementi). 
+	 * @param countryStart la Country di partenza
+	 * @param countryEnd la Country di arrivo
+	 * @return la lista di Country corrispondente al cammino più breve. 
+	 * Nel caso in cui il cammino non esista, è una lista vuota. Altrimenti, il primo elemento della lista
+	 * è sempre countryStart, e l'ultimo è sempre countryEnd.
+	 */
+	public List<Country> shortestPath(Country countryStart, Country countryEnd) {
+		Map<Country, Country> father = getCammini(countryStart);
+
+		List<Country> path = new LinkedList<Country>() ;
+		
+		Country c = countryEnd ;
+		while (c!=null) {
+			path.add(0,c) ;
+			c = father.get(c) ;
+		}
+		return path;
+	}
+
+	/**
+	 * Some test methods for the class Model
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		
 		Model m = new Model() ;
@@ -132,19 +194,5 @@ public class Model {
 
 	}
 
-	public SimpleGraph<Country, DefaultEdge> getGraph() {
-		return graph;
-	}
-
-	public List<Country> getCountries() {
-		return countries;
-	}
-
-	public List<Country> shortestPath(Country countryStart, Country countryEnd) {
-		getCammini(countryStart);
-
-		
-		return null;
-	}
-
+	
 }
