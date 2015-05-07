@@ -45,10 +45,17 @@ public class BordersController {
 				&& !countryStart.equals(countryEnd)) {
 			List<Country> path = model.shortestPath(countryStart, countryEnd);
 
-			txtResult.appendText("Cammino minimo tra "
-					+ countryStart.toString() + " e " + countryEnd.toString());
-			for (Country c : path) {
-				txtResult.appendText(c.toString() + "\n");
+			if (path != null) {
+				txtResult.appendText("Cammino minimo tra "
+						+ countryStart.toString() + " e "
+						+ countryEnd.toString() + "\n");
+				for (Country c : path) {
+					txtResult.appendText(c.toString() + "\n");
+				}
+			} else {
+				txtResult.appendText("Cammino inesistente tra "
+						+ countryStart.toString() + " e "
+						+ countryEnd.toString() + "\n");
 			}
 
 		} else {

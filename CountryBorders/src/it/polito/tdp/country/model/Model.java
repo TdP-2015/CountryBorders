@@ -6,7 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;
+import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
@@ -130,8 +132,11 @@ public class Model {
 	 * Nel caso in cui il cammino non esista, è una lista vuota. Altrimenti, il primo elemento della lista
 	 * è sempre countryStart, e l'ultimo è sempre countryEnd.
 	 */
-	public List<Country> shortestPath(Country countryStart, Country countryEnd) {
+	public List<Country> shortestPathOld(Country countryStart, Country countryEnd) {
 		Map<Country, Country> father = getCammini(countryStart);
+
+		if( !father.keySet().contains(countryEnd))
+			return null ; // il camminio non esiste (non raggiungibile)
 
 		List<Country> path = new LinkedList<Country>() ;
 		
@@ -142,6 +147,41 @@ public class Model {
 		}
 		return path;
 	}
+	
+	public List<Country> shortestPath(Country countryStart, Country countryEnd) { 
+		DijkstraShortestPath<Country, DefaultEdge> dijkstra =
+				new DijkstraShortestPath<Country, DefaultEdge>(graph, countryStart, countryEnd) ;
+		GraphPath<Country, DefaultEdge> path = dijkstra.getPath() ;
+		
+		if(path==null)
+			return null ;
+		
+		List<Country> vertici = Graphs.getPathVertexList(path) ;
+		
+		return vertici;
+
+		/*
+		List<Country> vertici = new LinkedList<Country>() ;
+		
+
+		Country previous = path.getStartVertex() ;
+		vertici.add(previous) ;
+		
+		for( DefaultEdge e: path.getEdgeList() ) {
+			
+			Country next = 
+					Graphs.getOppositeVertex(path.getGraph(), e, previous) ;
+			vertici.add(next) ;
+			
+			previous = next ;	
+		}
+		
+		return vertici ;
+			
+		*/
+		
+	}
+
 
 	/**
 	 * Some test methods for the class Model
