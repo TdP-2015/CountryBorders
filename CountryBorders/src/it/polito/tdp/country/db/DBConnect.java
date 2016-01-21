@@ -12,7 +12,7 @@ import java.sql.SQLException;
  */
 class DBConnect {
 	
-	private static String url = "jdbc:mysql://localhost/countries?user=root";
+	private static String url = "jdbc:mysql://localhost/countries?user=root&password=root";
 
 	/**
 	 * Restituisce una nuova connessione, con i parametri a lui noti

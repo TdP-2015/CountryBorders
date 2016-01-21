@@ -9,5 +9,6 @@
 			<attribute name="javadoc_location" value="jar:file:/D:/Dropbox/Didattica/03FYZ%20Tecniche%20di%20programmazione/tools/libraries/jgrapht-0.9.1.zip!/jgrapht-0.9.1/javadoc"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.38-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

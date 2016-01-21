@@ -53,11 +53,11 @@ public class CountryDAO {
 	public List<Country> getBorderingCountries(Country c, int contType, int year) {
 		String sql = 
 				"SELECT CCode, StateAbb, StateNme " +
-				"FROM country, contiguity " +
-				"WHERE country.CCode = contiguity.state2no " +
-				"AND contiguity.state1no = ? " +
-				"AND contiguity.conttype <= ? " +
-				"AND contiguity.year = ? ";
+				"FROM country, contiguity2006 " +
+				"WHERE country.CCode = contiguity2006.state2no " +
+				"AND contiguity2006.state1no = ? " +
+				"AND contiguity2006.conttype <= ? " +
+				"AND contiguity2006.year = ? ";
 
 		try {
 			Connection conn = DBConnect.getConnection() ;
